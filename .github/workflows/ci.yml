@@ -27,6 +27,7 @@ on:
 env:
   CHALK_ON: ${{ inputs.leg == 'instrumented' }}
 permissions:
+  id-token: write
   contents: read
 
 concurrency:
@@ -42,7 +43,16 @@ jobs:
       matrix:
         erlang_version: ["28", "29"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: crashappsec/action-checkout@main
+        with:
+          chalk: ${{ env.CHALK_ON }}
+          profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
+          lfs: false
+      - name: Assert instrumentation is live
+        if: env.CHALK_ON == 'true'
+        continue-on-error: true
+        run: |
+          test -n "${CURIOSITY_ROOT:-}" || { echo "::warning::CURIOSITY_ROOT unset in this step - in a container job the observables install on the host"; exit 1; }
       - uses: erlef/setup-beam@v1
         with:
           otp-version: ${{ matrix.erlang_version }}
@@ -59,7 +69,16 @@ jobs:
       matrix:
         node_version: ["22.x", "24.x", "26.x"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: crashappsec/action-checkout@main
+        with:
+          chalk: ${{ env.CHALK_ON }}
+          profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
+          lfs: false
+      - name: Assert instrumentation is live
+        if: env.CHALK_ON == 'true'
+        continue-on-error: true
+        run: |
+          test -n "${CURIOSITY_ROOT:-}" || { echo "::warning::CURIOSITY_ROOT unset in this step - in a container job the observables install on the host"; exit 1; }
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "28"
@@ -77,7 +96,16 @@ jobs:
       matrix:
         bun_version: ["1.x"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: crashappsec/action-checkout@main
+        with:
+          chalk: ${{ env.CHALK_ON }}
+          profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
+          lfs: false
+      - name: Assert instrumentation is live
+        if: env.CHALK_ON == 'true'
+        continue-on-error: true
+        run: |
+          test -n "${CURIOSITY_ROOT:-}" || { echo "::warning::CURIOSITY_ROOT unset in this step - in a container job the observables install on the host"; exit 1; }
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "29"
@@ -95,7 +123,16 @@ jobs:
       matrix:
         deno_version: ["2.x"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: crashappsec/action-checkout@main
+        with:
+          chalk: ${{ env.CHALK_ON }}
+          profile: ${{ inputs.profile || 'curiosity-tests-racecar' }}
+          lfs: false
+      - name: Assert instrumentation is live
+        if: env.CHALK_ON == 'true'
+        continue-on-error: true
+        run: |
+          test -n "${CURIOSITY_ROOT:-}" || { echo "::warning::CURIOSITY_ROOT unset in this step - in a container job the observables install on the host"; exit 1; }
       - uses: erlef/setup-beam@v1
         with:
           otp-version: "29"
